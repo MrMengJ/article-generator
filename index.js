@@ -1,7 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
-import dayjs from "dayjs";
 
 import { createRandomPicker } from "./lib/random.js";
 import { generator } from "./lib/generator.js";
@@ -24,10 +23,7 @@ const article = generator(title, {
 
 const saveCorpus = (title, article) => {
   const outputDir = resolve(__dirname, "output");
-  const outputFile = resolve(
-    outputDir,
-    `${title}|${dayjs().format("YYYY-MM-DD HH:mm:ss")}.txt`
-  );
+  const outputFile = resolve(outputDir, `${title}-${new Date().getTime()}.txt`);
 
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir);
