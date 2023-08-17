@@ -12,13 +12,29 @@ const loadCorpus = (src) => {
   return JSON.parse(data);
 };
 
-const corpus = loadCorpus("corpus/data.json");
+function parseOptions(options = {}) {
+  const argv = process.argv;
+  for (let i = 2; i < argv.length; i++) {
+    const cmd = argv[i - 1];
+    const value = argv[i];
+    if (cmd === "--title") {
+      options.title = value;
+    } else if (cmd === "--min") {
+      options.min = Number(value);
+    } else if (cmd === "--max") {
+      options.max = Number(value);
+    }
+  }
+  return options;
+}
 
-const pickTitle = createRandomPicker(corpus.title);
-const title = pickTitle();
+const corpus = loadCorpus("corpus/data.json");
+const options = parseOptions();
+const title = options.title || createRandomPicker(corpus.title)();
 
 const article = generator(title, {
   corpus,
+  ...options,
 });
 
 const saveCorpus = (title, article) => {
@@ -35,4 +51,6 @@ const saveCorpus = (title, article) => {
   return outputFile;
 };
 
-saveCorpus(title, article);
+const outputFile = saveCorpus(title, article);
+
+console.log(`生成成功！文章保存于：${outputFile}`);
